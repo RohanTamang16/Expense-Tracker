@@ -1,39 +1,25 @@
 const express = require("express");
 const { Client } = require("pg");
+const createUserTable = require("./data/createUserTable");
 require("dotenv").config();
+const cors = require('cors')
+const userRoutes = require('./route/userRoute')
+const errorHandling = require('./middleware/errorHandling')
 
 const app = express();
 
-const client = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-});
+// middleware
+app.use(express.json())
+app.use(cors())
 
-const testDatabase = async () => {
-    try {
-        await client.connect();
+//Routes 
+app.use('/api', userRoutes)
 
-        const result = await client.query(`
-            SELECT
-                current_database(),
-                current_user,
-                inet_server_addr(),
-                inet_server_port(),
-                version()
-        `);
+//error handling middleware
+app.use(errorHandling)
 
-        console.log(result.rows[0]);
-
-        await client.end();
-    } catch (error) {
-        console.error("Database connection failed:", error);
-    }
-};
-
-testDatabase();
+// creating a user table before starting server
+createUserTable()
 
 app.listen(8000, () => {
     console.log("Server running on port 8000");
