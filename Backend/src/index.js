@@ -1,5 +1,4 @@
 const express = require("express");
-const { Client } = require("pg");
 const createUserTable = require("./data/createUserTable");
 require("dotenv").config();
 const cors = require('cors')
@@ -21,6 +20,17 @@ app.use(errorHandling)
 // creating a user table before starting server
 createUserTable()
 
-app.listen(8000, () => {
-    console.log("Server running on port 8000");
-});
+// Start server
+const startServer = async () => {
+    try {
+        await createUserTable();
+
+        app.listen(8000, () => {
+            console.log("Server running on port 8000");
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+    }
+};
+
+startServer();
