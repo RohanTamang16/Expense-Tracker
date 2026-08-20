@@ -11,8 +11,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+	const navigate = useNavigate()
 	const [showPassword, setShowPassword] = useState(false);
 	const togglePassword = () => {
 		setShowPassword((previous) => !previous);
@@ -32,13 +34,15 @@ const LoginPage = () => {
 	}
 
 	const handleSubmit = async (e) => {
-		e.preventDefault;
+		e.preventDefault();
 
 		try {
 			const response = await axios.post(
-				"http://localhost:8000/api/login"
+				"http://localhost:8000/api/login",
+				formData
 			)
 			console.log("Login Successfull", response.data)
+			navigate('/dashboard')
 		} catch (error) {
 			console.error("Login Failed", error.response?.data || error.message)
 		}
