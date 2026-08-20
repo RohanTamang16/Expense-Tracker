@@ -1,5 +1,5 @@
 const express = require('express')
-const {createUser, getUser} = require('../controller/userController')
+const {createUser} = require('../controller/userController')
 const validateUser = require('../middleware/userValidation')
 
 const router = express.Router()

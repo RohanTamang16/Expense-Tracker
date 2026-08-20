@@ -10,12 +10,39 @@ import {
 	Sparkles,
 } from "lucide-react";
 import { useState } from "react";
+import axios from "axios";
 
 const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const togglePassword = () => {
 		setShowPassword((previous) => !previous);
 	};
+
+	const [formData, setFormData] = useState({
+		email: '',
+		password: ''
+	})
+
+	const handleChange = (e) =>{
+		const {name, value} = e.target;
+		setFormData((previous) =>({
+			...previous,
+			[name] : value,
+		}))
+	}
+
+	const handleSubmit = async (e) => {
+		e.preventDefault;
+
+		try {
+			const response = await axios.post(
+				"http://localhost:8000/api/login"
+			)
+			console.log("Login Successfull", response.data)
+		} catch (error) {
+			console.error("Login Failed", error.response?.data || error.message)
+		}
+	}
 	return (
 		<div className="h-screen w-full bg-[#070B14] text-white flex items-center justify-center px-4 overflow-hidden relative">
 			{/* ================= BACKGROUND ================= */}
@@ -85,7 +112,8 @@ const LoginPage = () => {
 
 					{/* ================= FORM ================= */}
 
-					<form className="space-y-4">
+					<form className="space-y-4"
+					onSubmit={handleSubmit}>
 						{/* Email */}
 
 						<div>
@@ -102,6 +130,9 @@ const LoginPage = () => {
 								<input
 									type="email"
 									placeholder="you@example.com"
+									name="email"
+									value={formData.email}
+									onChange={handleChange}
 									className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-500/60 focus:bg-blue-500/5 focus:ring-4 focus:ring-blue-500/10"
 								/>
 							</div>
@@ -131,6 +162,9 @@ const LoginPage = () => {
 
 								<input
 									id="password"
+									name="password"
+									value={formData.password}
+									onChange={handleChange}
 									type={showPassword ? "text" : "password"}
 									placeholder="Enter your password"
 									className="w-full h-12 pl-12 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-500/60 focus:bg-blue-500/5 focus:ring-4 focus:ring-blue-500/10"
