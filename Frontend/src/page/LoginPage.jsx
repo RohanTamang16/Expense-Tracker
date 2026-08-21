@@ -41,6 +41,17 @@ const LoginPage = () => {
 				"http://localhost:8000/api/login",
 				formData
 			)
+			console.log("Login response:", response.data);
+
+			localStorage.setItem(
+				"user",
+				JSON.stringify(response.data.data.user)
+			)
+
+			localStorage.setItem(
+				"token",
+				response.data.data.token
+			)
 			console.log("Login Successfull", response.data)
 			navigate('/dashboard')
 		} catch (error) {
