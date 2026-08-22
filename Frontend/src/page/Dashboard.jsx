@@ -30,6 +30,8 @@ import ShowName from "../components/common/ShowName";
 import ShowInitial from "../components/common/ShowInitial";
 
 const Dashboard = () => {
+
+  const name = JSON.parse(localStorage.getItem('user'))
   const transactions = [
     {
       name: "Grocery Shopping",
@@ -350,7 +352,7 @@ const Dashboard = () => {
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                  Good morning, John 👋
+                  Good morning, {name?.name || 'GUEST'} 👋
                 </h1>
 
                 <p className="text-sm text-slate-500 mt-1">
