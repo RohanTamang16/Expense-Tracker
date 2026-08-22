@@ -1,0 +1,7 @@
+export {default as Dashboard} from './Dashboard'
+export {default as Transaction} from './Transaction'
+export {default as LoginPage} from './LoginPage'
+export {default as SignupPage} from './SignupPage'
+export {default as IncomePage} from './IncomePage'
+export {default as SavingPage} from './SavingPage'
+export {default as ExpensePage} from './ExpensePage'
