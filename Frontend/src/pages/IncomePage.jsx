@@ -4,14 +4,11 @@ import {
   ArrowUpCircle,
   Wallet,
   Plus,
-  CalendarDays,
-  Tag,
-  FileText,
-  Banknote,
   BriefcaseBusiness,
   Gift,
   TrendingUp,
 } from "lucide-react";
+import IncomeForm from "../form/IncomeForm";
 
 const IncomePage = () => {
   return (
@@ -130,127 +127,7 @@ const IncomePage = () => {
                 </div>
 
                 {/* Form */}
-                <form className="space-y-5">
-
-                  {/* Amount */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Amount
-                    </label>
-
-                    <div className="relative group">
-                      <Banknote
-                        size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors duration-300"
-                      />
-
-                      <input
-                        type="number"
-                        placeholder="0.00"
-                        className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-emerald-500/50 focus:bg-emerald-500/5 focus:ring-4 focus:ring-emerald-500/10"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Source */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Income Source
-                    </label>
-
-                    <div className="relative group">
-                      <Tag
-                        size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors duration-300"
-                      />
-
-                      <select
-                        className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none appearance-none cursor-pointer transition-all duration-300 focus:border-emerald-500/50 focus:bg-emerald-500/5 focus:ring-4 focus:ring-emerald-500/10"
-                      >
-                        <option className="bg-[#101622]">
-                          Select income source
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Salary
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Freelance
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Business
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Investment
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Gift
-                        </option>
-
-                        <option className="bg-[#101622]">
-                          Other
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Date */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Date
-                    </label>
-
-                    <div className="relative group">
-                      <CalendarDays
-                        size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors duration-300"
-                      />
-
-                      <input
-                        type="date"
-                        className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/5 border border-white/10 text-white outline-none transition-all duration-300 focus:border-emerald-500/50 focus:bg-emerald-500/5 focus:ring-4 focus:ring-emerald-500/10"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Description
-                    </label>
-
-                    <div className="relative group">
-                      <FileText
-                        size={18}
-                        className="absolute left-4 top-4 text-slate-500 group-focus-within:text-emerald-400 transition-colors duration-300"
-                      />
-
-                      <textarea
-                        rows="4"
-                        placeholder="Add a note about this income..."
-                        className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-600 outline-none resize-none transition-all duration-300 focus:border-emerald-500/50 focus:bg-emerald-500/5 focus:ring-4 focus:ring-emerald-500/10"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Button */}
-                  <button
-                    type="submit"
-                    className="group relative w-full h-12 rounded-xl overflow-hidden bg-linear-to-r from-emerald-600 via-teal-600 to-cyan-600 font-semibold shadow-lg shadow-emerald-600/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-emerald-500/30 active:translate-y-0"
-                  >
-                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-linear-to-r from-transparent via-white/20 to-transparent" />
-
-                    <span className="relative flex items-center justify-center gap-2">
-                      <Plus size={18} />
-                      Add Income
-                    </span>
-                  </button>
-
-                </form>
+               <IncomeForm />
               </div>
             </div>
           </div>
