@@ -13,9 +13,66 @@ import {
   GraduationCap,
   ShieldCheck,
   TrendingUp,
+  Loader
 } from "lucide-react";
+import { getIncome } from "../services/IncomeServices";
+import { getExpense } from "../services/ExpenseService";
+import { useEffect, useState } from "react";
+import {
+	calculateTotal,
+	getCurrentMonthData,
+	calculateSavings,
+} from "../utils/FinancialCalculation";
 
 const SavingPage = () => {
+  	const [income, setIncome] = useState([]);
+	const [expense, setExpense] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	// Fetch Income and Expense
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				const incomeData = await getIncome();
+				const expenseData = await getExpense();
+
+				setIncome(incomeData.data || []);
+				setExpense(expenseData.data || []);
+			} catch (error) {
+				console.error("Error fetching data", error);
+				setIncome([]);
+				setExpense([]);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchData();
+	}, []);
+
+  // Calculate financial data
+    const currentMonthIncome = getCurrentMonthData(income);
+    const currentMonthExpense = getCurrentMonthData(expense);
+  
+    const totalIncome = calculateTotal(currentMonthIncome);
+    const totalExpense = calculateTotal(currentMonthExpense);
+  
+    // Savings calculations
+    const savings = calculateSavings(totalIncome, totalExpense);
+  
+    
+  
+    // Loading screen
+	if (loading) {
+		return (
+			<div className="min-h-screen bg-[#070B14] text-white flex items-center justify-center">
+				<div className="flex flex-col items-center gap-4">
+					<Loader size={40} className="animate-spin text-blue-400" />
+					<p className="text-slate-400">Loading your dashboard...</p>
+				</div>
+			</div>
+		);
+	}
   return (
     <div className="min-h-screen bg-[#070B14] text-white relative overflow-hidden">
 
@@ -103,7 +160,7 @@ const SavingPage = () => {
               </p>
 
               <p className="text-sm font-semibold text-white">
-                $5,240.00
+                ${savings}
               </p>
 
             </div>

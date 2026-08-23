@@ -16,24 +16,75 @@ import {
 	ArrowDownRight,
 	CircleDollarSign,
 	CreditCard,
+	Loader,
 	Landmark,
 } from "lucide-react";
 import { getIncome } from "../services/IncomeServices";
+import { getExpense } from "../services/ExpenseService";
 import { useState, useEffect } from "react";
+import {
+	calculateTotal,
+	getCurrentMonthData,
+	calculateSavings,
+	calculateSavingsRate,
+} from "../utils/FinancialCalculation";
+import ShowInitial from "../components/common/ShowInitial";
 const Transactions = () => {
 	const [income, setIncome] = useState([]);
+	const [expense, setExpense] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-	 useEffect(() =>{
-    const fetchIncome = async () => {
-      try {
-        const data = await getIncome();
-        setIncome(data.data)
-      } catch (error) {
-        console.error("Error fetching income data", error)
-      }
-    }
-    fetchIncome()
-  }, [])
+	// Fetch Income
+	useEffect(() => {
+		const fetchIncome = async () => {
+			try {
+				const data = await getIncome();
+				setIncome(data.data || []);
+			} catch (error) {
+				console.error("Error fetching income data", error);
+				setIncome([]);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchIncome();
+	}, []);
+
+	// Fetch Expense
+	useEffect(() => {
+		const fetchExpense = async () => {
+			try {
+				const data = await getExpense();
+				setExpense(data.data || []);
+			} catch (error) {
+				console.error("Error fetching expense data", error);
+				setExpense([]);
+			}
+		};
+		fetchExpense();
+	}, []);
+
+	// Calculate financial data
+	const currentMonthIncome = getCurrentMonthData(income);
+	const currentMonthExpense = getCurrentMonthData(expense);
+
+	const totalIncome = calculateTotal(currentMonthIncome);
+	const totalExpense = calculateTotal(currentMonthExpense);
+	// Savings calculations
+	const savings = calculateSavings(totalIncome, totalExpense);
+	const savingsRate = calculateSavingsRate(savings, totalIncome);
+
+	const name = JSON.parse(localStorage.getItem("user"));
+	if (loading) {
+		return (
+			<div className="min-h-screen bg-[#070B14] text-white flex items-center justify-center">
+				<div className="flex flex-col items-center gap-4">
+					<Loader size={40} className="animate-spin text-blue-400" />
+					<p className="text-slate-400">Loading your dashboard...</p>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="min-h-screen bg-[#070B14] text-white">
 			{/* ================= BACKGROUND ================= */}
@@ -168,11 +219,13 @@ const Transactions = () => {
 					<div className="p-4 border-t border-white/10">
 						<div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
 							<div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center font-semibold text-sm">
-								RT
+								<ShowInitial />
 							</div>
 
 							<div className="flex-1 min-w-0">
-								<p className="text-sm font-medium truncate">Rohan Tamang</p>
+								<p className="text-sm font-medium truncate">
+									{name?.name || "GUEST"}
+								</p>
 
 								<p className="text-[11px] text-slate-500 truncate">
 									Personal Account
@@ -209,7 +262,7 @@ const Transactions = () => {
 
 							<Link to="/profile" className="hidden sm:flex items-center gap-2">
 								<div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold">
-									RT
+									<ShowInitial />
 								</div>
 							</Link>
 						</div>
@@ -260,7 +313,7 @@ const Transactions = () => {
 								<p className="text-sm text-slate-500">Total Income</p>
 
 								<h3 className="text-2xl font-bold mt-1">
-									Rs. {income.map((item) => item.amount)}
+									$ {totalIncome.toFixed(2)}
 								</h3>
 							</div>
 
@@ -279,7 +332,9 @@ const Transactions = () => {
 
 								<p className="text-sm text-slate-500">Total Expenses</p>
 
-								<h3 className="text-2xl font-bold mt-1">Rs. 32,450</h3>
+								<h3 className="text-2xl font-bold mt-1">
+									${totalExpense.toFixed(2)}
+								</h3>
 							</div>
 
 							{/* Savings */}
@@ -292,12 +347,12 @@ const Transactions = () => {
 										<PiggyBank size={20} />
 									</div>
 
-									<span className="text-xs text-purple-400">+18.4%</span>
+									<span className="text-xs text-purple-400">{savingsRate} %</span>
 								</div>
 
 								<p className="text-sm text-slate-500">Total Savings</p>
 
-								<h3 className="text-2xl font-bold mt-1">Rs. 52,550</h3>
+								<h3 className="text-2xl font-bold mt-1">Rs. {savings}</h3>
 							</div>
 						</div>
 
