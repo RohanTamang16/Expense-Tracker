@@ -9,8 +9,23 @@ import {
   TrendingUp,
 } from "lucide-react";
 import IncomeForm from "../form/IncomeForm";
+import { getIncome } from "../services/IncomeServices";
+import { useEffect, useState } from "react";
 
 const IncomePage = () => {
+  const [income, setIncome] = useState([])
+
+  useEffect(() =>{
+    const fetchIncome = async () => {
+      try {
+        const data = await getIncome();
+        setIncome(data.data)
+      } catch (error) {
+        console.error("Error fetching income data", error)
+      }
+    }
+    fetchIncome()
+  }, [])
   return (
     <>
    
@@ -86,7 +101,9 @@ const IncomePage = () => {
                 Current Balance
               </p>
               <p className="text-sm font-semibold text-white">
-                $12,450.00
+                $ {income.map((item)=>(
+                  item.amount
+                ))}
               </p>
             </div>
           </div>

@@ -28,8 +28,24 @@ import {
 } from "lucide-react";
 import ShowName from "../components/common/ShowName";
 import ShowInitial from "../components/common/ShowInitial";
-
+import { getIncome } from "../services/IncomeServices";
+import { useState, useEffect } from "react";
 const Dashboard = () => {
+
+  const [income, setIncome] = useState([]);
+
+   useEffect(() =>{
+    const fetchIncome = async () => {
+      try {
+        const data = await getIncome();
+        setIncome(data.data)
+      } catch (error) {
+        console.error("Error fetching income data", error)
+      }
+    }
+    fetchIncome()
+  }, [])
+  
 
   const name = JSON.parse(localStorage.getItem('user'))
   const transactions = [
@@ -430,7 +446,9 @@ const Dashboard = () => {
                   </p>
 
                   <h2 className="text-2xl font-bold">
-                    $7,250.00
+                    $ {income.map((item) =>(
+                      item.amount
+                    ))}
                   </h2>
 
                   <p className="text-[11px] text-slate-600 mt-2">
