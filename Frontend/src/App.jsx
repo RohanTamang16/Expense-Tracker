@@ -9,6 +9,8 @@ import {
 	Transaction
 
 } from './pages'
+import BudgetPage from "./pages/BudgetPage"
+import CreateBudget from "./components/budget/CreateBudget"
 const App = () => {
   return (
    <Routes>
@@ -19,6 +21,8 @@ const App = () => {
     <Route path="/expenses" element={<ExpensePage />} />
     <Route path="/savings" element={<SavingPage />} />
     <Route path="/transactions" element={<Transaction />} />
+    <Route path="/budgets" element={<BudgetPage />} />
+    <Route path="/budgets/new" element={<CreateBudget />} />
    </Routes>
   )
 }
