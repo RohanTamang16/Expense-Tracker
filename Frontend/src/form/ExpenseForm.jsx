@@ -81,7 +81,8 @@ const ExpenseForm = () => {
 	};
 
 	return (
-		<form className="space-y-5" onSubmit={handleSubmit}>
+		<form className="space-y-5"
+		 onSubmit={handleSubmit}>
 			{/* Error Message */}
 			{error && (
 				<div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">

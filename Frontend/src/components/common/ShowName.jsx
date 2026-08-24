@@ -1,8 +1,6 @@
 const ShowName = () => {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    console.log("Logged in user:", user);
-
     return (
         <div>
             <p className="text-sm font-medium">

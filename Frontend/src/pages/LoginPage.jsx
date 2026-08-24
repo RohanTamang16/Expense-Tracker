@@ -41,7 +41,6 @@ const LoginPage = () => {
 				"http://localhost:8000/api/login",
 				formData
 			)
-			console.log("Login response:", response.data);
 
 			localStorage.setItem(
 				"user",

@@ -1,15 +1,26 @@
 const express = require("express");
-const createUserTable = require("./data/createUserTable");
-const createIncomeTable = require('./data/createIncomeTable')
-const createExpenseTable = require('./data/createExpenseTable')
-require("dotenv").config();
-const cors = require("cors");
-const userRoutes = require("./route/userRoute");
-const errorHandling = require("./middleware/errorHandling");
-const loginRoute = require('./route/loginRoute')
-const incomeRoute = require('./route/incomeRoute')
-const expenseRoute = require('./route/expenseRoute')
 const app = express();
+const cors = require("cors");
+
+const {
+    createUserTable,
+    createBudgetTable,
+    createExpenseTable,
+	createIncomeTable
+} = require("./data");
+require("dotenv").config();
+
+
+// import  routes 
+const  { 
+	loginRoute, 
+	incomeRoute, 
+	expenseRoute, 
+	userRoutes, 
+	budgetRoute
+} = require('./route')
+const errorHandling = require("./middleware/errorHandling");
+
 
 // middleware
 app.use(express.json());
@@ -20,6 +31,7 @@ app.use("/api", userRoutes);
 app.use('/api', loginRoute)
 app.use('/api', incomeRoute)
 app.use('/api', expenseRoute)
+app.use('/api', budgetRoute)
 
 //error handling middleware
 app.use(errorHandling);
@@ -30,6 +42,7 @@ const startServer = async () => {
 		await createUserTable();
 		await createIncomeTable()
 		await createExpenseTable()
+		await createBudgetTable()
 		app.listen(8000, () => {
 			console.log("Server running on port 8000");
 		});
