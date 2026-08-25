@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import {
     LayoutDashboard,
     Wallet,
@@ -11,66 +12,71 @@ import {
     Search,
     Bell,
     ChevronRight,
-    Utensils,
-    Car,
-    Zap,
-    Home,
-    ShoppingBag,
 } from "lucide-react";
 
+import { getBudget } from "../services/BudgetService";
 import ShowName from "../components/common/ShowName";
 import ShowInitial from "../components/common/ShowInitial";
 
+import { useState, useEffect } from "react";
+
 const Budget = () => {
-    const budgets = [
-        {
-            name: "Food & Dining",
-            category: "Food",
-            spent: 420,
-            limit: 600,
-            icon: Utensils,
-            color: "bg-orange-500",
-        },
-        {
-            name: "Transportation",
-            category: "Transportation",
-            spent: 180,
-            limit: 400,
-            icon: Car,
-            color: "bg-blue-500",
-        },
-        {
-            name: "Entertainment",
-            category: "Entertainment",
-            spent: 120,
-            limit: 300,
-            icon: Zap,
-            color: "bg-purple-500",
-        },
-        {
-            name: "Housing",
-            category: "Housing",
-            spent: 850,
-            limit: 1200,
-            icon: Home,
-            color: "bg-pink-500",
-        },
-        {
-            name: "Shopping",
-            category: "Shopping",
-            spent: 250,
-            limit: 500,
-            icon: ShoppingBag,
-            color: "bg-cyan-500",
-        },
-    ];
+    const [budgets, setBudgets] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBudgets = async () => {
+            try {
+                const data = await getBudget();
+
+                console.log("Budget API response:", data);
+
+                /*
+                 * Depending on your backend response,
+                 * data may be:
+                 *
+                 * 1. An array:
+                 *    [{ id: 1, name: "...", amount: 500 }]
+                 *
+                 * 2. An object containing an array:
+                 *    { budgets: [...] }
+                 *
+                 * 3. An object containing data:
+                 *    { data: [...] }
+                 */
+
+                if (Array.isArray(data)) {
+                    setBudgets(data);
+                } else if (Array.isArray(data?.budgets)) {
+                    setBudgets(data.budgets);
+                } else if (Array.isArray(data?.data)) {
+                    setBudgets(data.data);
+                } else {
+                    console.error("Unexpected budget response:", data);
+                    setBudgets([]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch budgets:", error);
+                setBudgets([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBudgets();
+    }, []);
+
+    // Calculate total budget from database values
+    const totalBudget = budgets.reduce(
+        (total, item) => total + Number(item.amount || 0),
+        0
+    );
 
     return (
         <div className="min-h-screen bg-[#070B14] text-white">
 
             {/* Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-
                 <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
 
                 <div className="absolute top-1/3 -right-40 h-96 w-96 rounded-full bg-purple-600/10 blur-3xl" />
@@ -103,7 +109,7 @@ const Budget = () => {
 
                             <div className="absolute inset-0 bg-blue-500 rounded-xl blur-lg opacity-40" />
 
-                            <div className="relative h-10 w-10 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                            <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                                 <Wallet size={21} />
                             </div>
 
@@ -121,14 +127,12 @@ const Budget = () => {
 
                     </div>
 
-
                     {/* Navigation */}
                     <nav className="flex-1 px-4 py-6 space-y-2">
 
                         <p className="px-3 mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">
                             Overview
                         </p>
-
 
                         {/* Dashboard */}
                         <Link
@@ -145,7 +149,6 @@ const Budget = () => {
                             </span>
                         </Link>
 
-
                         {/* Transactions */}
                         <Link
                             to="/transactions"
@@ -161,8 +164,7 @@ const Budget = () => {
                             </span>
                         </Link>
 
-
-                        {/* Budgets - ACTIVE */}
+                        {/* Budgets */}
                         <Link
                             to="/budgets"
                             className="group flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-500/10 border border-blue-500/10 text-blue-400 transition-all duration-300"
@@ -175,7 +177,6 @@ const Budget = () => {
 
                             <span className="ml-auto h-2 w-2 rounded-full bg-blue-400 animate-pulse" />
                         </Link>
-
 
                         {/* Analytics */}
                         <Link
@@ -192,11 +193,9 @@ const Budget = () => {
                             </span>
                         </Link>
 
-
                         <p className="px-3 mb-3 mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">
                             Account
                         </p>
-
 
                         {/* Settings */}
                         <Link
@@ -212,11 +211,10 @@ const Budget = () => {
 
                     </nav>
 
-
                     {/* User */}
                     <div className="p-4 border-t border-white/10">
 
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3">
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
 
                             <ShowInitial />
 
@@ -237,13 +235,11 @@ const Budget = () => {
 
                 </aside>
 
-
                 {/* =====================================================
                     MAIN CONTENT
                 ====================================================== */}
 
                 <main className="w-full lg:ml-64">
-
 
                     {/* =================================================
                         TOP NAVBAR
@@ -256,7 +252,7 @@ const Budget = () => {
                             {/* Mobile Logo */}
                             <div className="flex items-center gap-3 lg:hidden">
 
-                                <div className="h-9 w-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                                     <Wallet size={19} />
                                 </div>
 
@@ -266,9 +262,8 @@ const Budget = () => {
 
                             </div>
 
-
                             {/* Search */}
-                            <div className="hidden md:flex items-center w-72 h-10 rounded-xl bg-white/4 border border-white/10 px-3 gap-3">
+                            <div className="hidden md:flex items-center w-72 h-10 rounded-xl bg-white/5 border border-white/10 px-3 gap-3">
 
                                 <Search
                                     size={17}
@@ -287,11 +282,10 @@ const Budget = () => {
 
                             </div>
 
-
                             {/* Right */}
                             <div className="flex items-center gap-3 ml-auto">
 
-                                <button className="relative h-10 w-10 rounded-xl border border-white/10 bg-white/3 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                                <button className="relative h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
 
                                     <Bell size={18} />
 
@@ -299,9 +293,7 @@ const Budget = () => {
 
                                 </button>
 
-
                                 <div className="hidden sm:block h-8 w-px bg-white/10" />
-
 
                                 <div className="flex items-center gap-3">
 
@@ -325,13 +317,11 @@ const Budget = () => {
 
                     </header>
 
-
                     {/* =================================================
                         BUDGET CONTENT
                     ================================================= */}
 
                     <div className="p-5 sm:p-8 max-w-[1600px] mx-auto">
-
 
                         {/* Header */}
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-8">
@@ -361,11 +351,10 @@ const Budget = () => {
 
                             </div>
 
-
                             {/* Create Budget */}
                             <Link
                                 to="/budgets/new"
-                                className="group inline-flex items-center justify-center gap-2 px-5 h-11 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 font-semibold text-sm shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
+                                className="group inline-flex items-center justify-center gap-2 px-5 h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold text-sm shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
                             >
 
                                 <Plus
@@ -379,10 +368,11 @@ const Budget = () => {
 
                         </div>
 
+                        {/* =================================================
+                            SUMMARY CARDS
+                        ================================================= */}
 
-                        {/* Summary Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-
 
                             {/* Total Budget */}
                             <div className="rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl p-5">
@@ -396,7 +386,10 @@ const Budget = () => {
                                         </p>
 
                                         <h2 className="text-2xl font-bold mt-2">
-                                            $3,000
+                                            ${totalBudget.toLocaleString(undefined, {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })}
                                         </h2>
 
                                     </div>
@@ -408,7 +401,6 @@ const Budget = () => {
                                 </div>
 
                             </div>
-
 
                             {/* Total Spent */}
                             <div className="rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl p-5">
@@ -422,7 +414,7 @@ const Budget = () => {
                                         </p>
 
                                         <h2 className="text-2xl font-bold mt-2">
-                                            $1,820
+                                            $0.00
                                         </h2>
 
                                     </div>
@@ -434,7 +426,6 @@ const Budget = () => {
                                 </div>
 
                             </div>
-
 
                             {/* Remaining */}
                             <div className="rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl p-5">
@@ -448,7 +439,10 @@ const Budget = () => {
                                         </p>
 
                                         <h2 className="text-2xl font-bold mt-2">
-                                            $1,180
+                                            ${totalBudget.toLocaleString(undefined, {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })}
                                         </h2>
 
                                     </div>
@@ -463,10 +457,13 @@ const Budget = () => {
 
                         </div>
 
+                        {/* =================================================
+                            BUDGET LIST
+                        ================================================= */}
 
-                        {/* Budget List */}
                         <div className="rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl overflow-hidden">
 
+                            {/* Header */}
                             <div className="flex items-center justify-between p-6 border-b border-white/10">
 
                                 <div>
@@ -487,107 +484,128 @@ const Budget = () => {
 
                             </div>
 
+                            {/* Loading */}
+                            {loading && (
+                                <div className="p-10 text-center">
 
-                            <div className="divide-y divide-white/5">
+                                    <p className="text-sm text-slate-500">
+                                        Loading budgets...
+                                    </p>
 
-                                {budgets.map((budget, index) => {
+                                </div>
+                            )}
 
-                                    const Icon = budget.icon;
+                            {/* Empty */}
+                            {!loading && budgets.length === 0 && (
+                                <div className="p-10 text-center">
 
-                                    const percentage =
-                                        (budget.spent / budget.limit) * 100;
+                                    <Target
+                                        size={35}
+                                        className="mx-auto text-slate-600 mb-3"
+                                    />
 
-                                    return (
+                                    <p className="text-sm text-slate-400">
+                                        No budgets found.
+                                    </p>
 
-                                        <div
-                                            key={index}
-                                            className="p-6 hover:bg-white/2.5 transition-colors"
-                                        >
+                                    <p className="text-xs text-slate-600 mt-1">
+                                        Create a budget to see it here.
+                                    </p>
 
-                                            <div className="flex items-center gap-4">
+                                </div>
+                            )}
 
+                            {/* Budget Items */}
+                            {!loading && budgets.length > 0 && (
+                                <div className="divide-y divide-white/5">
 
-                                                {/* Icon */}
-                                                <div className="h-11 w-11 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
+                                    {budgets.map((budget, index) => {
 
-                                                    <Icon size={20} />
+                                        const amount = Number(
+                                            budget.amount || 0
+                                        );
 
-                                                </div>
+                                        return (
+                                            <div
+                                                key={budget.id || index}
+                                                className="p-6 hover:bg-white/[0.025] transition-colors"
+                                            >
 
+                                                <div className="flex items-center gap-4">
 
-                                                {/* Budget Info */}
-                                                <div className="flex-1 min-w-0">
+                                                    {/* Icon */}
+                                                    <div className="h-11 w-11 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                                                        <Wallet size={20} />
+                                                    </div>
 
-                                                    <div className="flex items-center justify-between mb-2">
+                                                    {/* Budget Info */}
+                                                    <div className="flex-1 min-w-0">
 
-                                                        <div>
+                                                        <div className="flex items-center justify-between mb-2">
 
-                                                            <p className="text-sm font-semibold">
-                                                                {budget.name}
-                                                            </p>
+                                                            <div>
 
-                                                            <p className="text-[11px] text-slate-600 mt-1">
-                                                                {budget.category}
+                                                                <p className="text-sm font-semibold">
+                                                                    {budget.name}
+                                                                </p>
+
+                                                                <p className="text-[11px] text-slate-500 mt-1">
+                                                                    {budget.category || "No category"}
+                                                                </p>
+
+                                                            </div>
+
+                                                            <p className="text-sm font-semibold text-white">
+                                                                ${amount.toLocaleString(undefined, {
+                                                                    minimumFractionDigits: 2,
+                                                                    maximumFractionDigits: 2,
+                                                                })}
                                                             </p>
 
                                                         </div>
 
-                                                        <p className="text-xs text-slate-500">
-                                                            ${budget.spent} / ${budget.limit}
-                                                        </p>
+                                                        {/* Amount Bar */}
+                                                        <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+
+                                                            <div
+                                                                className="h-full bg-blue-500 rounded-full"
+                                                                style={{
+                                                                    width: "100%",
+                                                                }}
+                                                            />
+
+                                                        </div>
+
+                                                        <div className="flex justify-between mt-2">
+
+                                                            <span className="text-[10px] text-slate-600">
+                                                                Budget limit
+                                                            </span>
+
+                                                            <span className="text-[10px] text-slate-500">
+                                                                ${amount.toFixed(2)}
+                                                            </span>
+
+                                                        </div>
 
                                                     </div>
 
-
-                                                    {/* Progress */}
-                                                    <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-
-                                                        <div
-                                                            className={`h-full ${budget.color} rounded-full transition-all duration-700`}
-                                                            style={{
-                                                                width: `${Math.min(
-                                                                    percentage,
-                                                                    100
-                                                                )}%`,
-                                                            }}
-                                                        />
-
-                                                    </div>
-
-
-                                                    <div className="flex justify-between mt-2">
-
-                                                        <span className="text-[10px] text-slate-600">
-                                                            {Math.round(percentage)}% used
-                                                        </span>
-
-                                                        <span className="text-[10px] text-slate-600">
-                                                            ${(budget.limit - budget.spent).toFixed(2)} remaining
-                                                        </span>
-
-                                                    </div>
+                                                    {/* Arrow */}
+                                                    <ChevronRight
+                                                        size={17}
+                                                        className="text-slate-600"
+                                                    />
 
                                                 </div>
 
-
-                                                {/* Arrow */}
-                                                <ChevronRight
-                                                    size={17}
-                                                    className="text-slate-600"
-                                                />
-
                                             </div>
+                                        );
+                                    })}
 
-                                        </div>
-
-                                    );
-
-                                })}
-
-                            </div>
+                                </div>
+                            )}
 
                         </div>
-
 
                         {/* Bottom Create Budget */}
                         <div className="mt-6">

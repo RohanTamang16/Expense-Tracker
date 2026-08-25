@@ -13,15 +13,16 @@ import {
 	CalendarDays,
 	PiggyBank,
 } from "lucide-react";
-import axios from "axios";
+import { createBudget } from "../../services/BudgetService";
 import { useState } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import ShowName from "../common/ShowName";
 import ShowInitial from "../common/ShowInitial";
 
 const CreateBudget = () => {
+	const navigate = useNavigate()
 	const [formData, setFormData] = useState({
 		name: "",
 		category: "",
@@ -43,76 +44,72 @@ const CreateBudget = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
 
-		setError("");
-		setSuccess("");
+    setError("");
+    setSuccess("");
 
-		if (
-			!formData.name ||
-			!formData.category ||
-			!formData.amount ||
-			!formData.description ||
-			!formData.start_date ||
-			!formData.end_date
-		) {
-			setError("Please fill all the required fields");
-			return;
-		}
+    if (
+        !formData.name ||
+        !formData.category ||
+        !formData.amount ||
+        !formData.description ||
+        !formData.start_date ||
+        !formData.end_date
+    ) {
+        setError("Please fill all the required fields");
+        return;
+    }
 
-		const token = localStorage.getItem("token");
+    try {
+        await createBudget(formData);
 
-		if (!token) {
-			setError("You must be logged in to add expense");
-			return;
-		}
+        setSuccess("Budget added successfully");
 
-		try {
-			const response = await axios.post(
-				"http://localhost:8000/api/budgets",
-				formData,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
+        setFormData({
+            name: "",
+            category: "",
+            amount: "",
+            start_date: "",
+            end_date: "",
+            description: "",
+        });
+		navigate('/budgets')
+    } catch (error) {
 
-			console.log("Budget form submitted successfully", response.data);
+        console.error(
+            "Error submitting budget form",
+            error.response?.data || error.message
+        );
 
-			setSuccess("Budget added successfully");
+        if (error.response) {
 
-			setFormData({
-				name: "",
-				category: "",
-				amount: "",
-				start_date: "",
-				end_date: "",
-				description: "",
-			});
-		} catch (error) {
-			console.error(
-				"Error submitting budget form",
-				error.response?.data || error.message,
-			);
+            if (error.response.status === 401) {
+                setError("Token expired. Please login again.");
+                localStorage.removeItem("token");
+                return;
+            }
 
-			if (error.response) {
-				if (error.response.status === 401) {
-					setError("Token expired. Please login again.");
-					localStorage.removeItem("token");
-					return;
-				}
+            setError(
+                `Error: ${
+                    error.response.data.message ||
+                    error.response.statusText
+                }`
+            );
 
-				setError(
-					`Error: ${error.response.data.message || error.response.statusText}`,
-				);
-			} else if (error.request) {
-				setError("No response from server. Check if backend is running.");
-			} else {
-				setError(error.message);
-			}
-		}
-	};
+        } else if (error.request) {
+
+            setError(
+                "No response from server. Check if backend is running."
+            );
+
+        } else {
+
+            setError(error.message);
+
+        }
+    }
+};
 	return (
 		<div className="min-h-screen bg-[#070B14] text-white">
 			{/* Background */}
