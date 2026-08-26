@@ -109,7 +109,7 @@ const Budget = () => {
 
                             <div className="absolute inset-0 bg-blue-500 rounded-xl blur-lg opacity-40" />
 
-                            <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                            <div className="relative h-10 w-10 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                                 <Wallet size={21} />
                             </div>
 
@@ -252,7 +252,7 @@ const Budget = () => {
                             {/* Mobile Logo */}
                             <div className="flex items-center gap-3 lg:hidden">
 
-                                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <div className="h-9 w-9 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                                     <Wallet size={19} />
                                 </div>
 
@@ -354,7 +354,7 @@ const Budget = () => {
                             {/* Create Budget */}
                             <Link
                                 to="/budgets/new"
-                                className="group inline-flex items-center justify-center gap-2 px-5 h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold text-sm shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
+                                className="group inline-flex items-center justify-center gap-2 px-5 h-11 rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 font-semibold text-sm shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all duration-300"
                             >
 
                                 <Plus
@@ -528,7 +528,7 @@ const Budget = () => {
                                         return (
                                             <div
                                                 key={budget.id || index}
-                                                className="p-6 hover:bg-white/[0.025] transition-colors"
+                                                className="p-6 hover:bg-white/2.5 transition-colors"
                                             >
 
                                                 <div className="flex items-center gap-4">
