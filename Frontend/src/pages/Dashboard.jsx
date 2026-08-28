@@ -7,13 +7,8 @@ import {
 	ArrowDownRight,
 	TrendingUp,
 	Plus,
-	MoreHorizontal,
-	ShoppingBag,
-	Coffee,
 	Car,
-	Home,
 	Utensils,
-	CircleDollarSign,
 	Bell,
 	Search,
 	Settings,
@@ -25,14 +20,18 @@ import {
 	CalendarDays,
 	Target,
 	Zap,
-  Loader
+	Loader,
 } from "lucide-react";
 import ShowName from "../components/common/ShowName";
 import ShowInitial from "../components/common/ShowInitial";
 import { getIncome } from "../services/IncomeServices";
 import { getExpense } from "../services/ExpenseService";
-import { calculateTotal, getCurrentMonthData } from "../utils/FinancialCalculation";
+import {
+	calculateTotal,
+	getCurrentMonthData,
+} from "../utils/FinancialCalculation";
 import { useState, useEffect } from "react";
+import RecentTransaction from "../components/dashboard/RecentTransaction";
 const Dashboard = () => {
 	const [income, setIncome] = useState([]);
 	const [expense, setExpense] = useState([]);
@@ -44,6 +43,8 @@ const Dashboard = () => {
 			try {
 				const data = await getIncome();
 				setIncome(data.data || []);
+				const token = localStorage.getItem("token");
+				console.log(token);
 			} catch (error) {
 				console.error("Error fetching income data", error);
 				setIncome([]);
@@ -68,7 +69,6 @@ const Dashboard = () => {
 		fetchExpense();
 	}, []);
 
-
 	const currentMonthIncome = getCurrentMonthData(income);
 	const currentMonthExpense = getCurrentMonthData(expense);
 
@@ -77,53 +77,6 @@ const Dashboard = () => {
 	const totalBalance = totalIncome - totalExpense;
 
 	const name = JSON.parse(localStorage.getItem("user"));
-	const transactions = [
-		{
-			name: "Grocery Shopping",
-			category: "Food & Dining",
-			date: "Today, 10:42 AM",
-			amount: "-$84.50",
-			icon: ShoppingBag,
-			iconBg: "bg-orange-500/10",
-			iconColor: "text-orange-400",
-		},
-		{
-			name: "Monthly Salary",
-			category: "Income",
-			date: "Today, 09:00 AM",
-			amount: "+$4,500.00",
-			icon: CircleDollarSign,
-			iconBg: "bg-emerald-500/10",
-			iconColor: "text-emerald-400",
-		},
-		{
-			name: "Coffee Shop",
-			category: "Food & Dining",
-			date: "Yesterday, 04:32 PM",
-			amount: "-$12.80",
-			icon: Coffee,
-			iconBg: "bg-purple-500/10",
-			iconColor: "text-purple-400",
-		},
-		{
-			name: "Uber Ride",
-			category: "Transportation",
-			date: "Yesterday, 08:15 AM",
-			amount: "-$24.20",
-			icon: Car,
-			iconBg: "bg-blue-500/10",
-			iconColor: "text-blue-400",
-		},
-		{
-			name: "Apartment Rent",
-			category: "Housing",
-			date: "Aug 18, 2026",
-			amount: "-$1,200.00",
-			icon: Home,
-			iconBg: "bg-pink-500/10",
-			iconColor: "text-pink-400",
-		},
-	];
 
 	const budgets = [
 		{
@@ -689,72 +642,7 @@ const Dashboard = () => {
 							{/* =====================================================
                   RECENT TRANSACTIONS
               ====================================================== */}
-
-							<div className="xl:col-span-2 rounded-2xl border border-white/10 bg-white/[0.035] backdrop-blur-xl overflow-hidden">
-								<div className="flex items-center justify-between p-6 border-b border-white/10">
-									<div>
-										<h3 className="font-semibold">Recent Transactions</h3>
-
-										<p className="text-xs text-slate-500 mt-1">
-											Your latest financial activity
-										</p>
-									</div>
-
-									<Link
-										to="/transactions"
-										className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
-									>
-										View All
-									</Link>
-								</div>
-
-								<div>
-									{transactions.map((transaction, index) => {
-										const Icon = transaction.icon;
-
-										return (
-											<div
-												key={index}
-												className="group flex items-center justify-between px-6 py-4 border-b border-white/5 last:border-0 hover:bg-white/2.5 transition-colors"
-											>
-												<div className="flex items-center gap-4">
-													<div
-														className={`h-11 w-11 rounded-xl ${transaction.iconBg} ${transaction.iconColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}
-													>
-														<Icon size={19} />
-													</div>
-
-													<div>
-														<p className="text-sm font-medium">
-															{transaction.name}
-														</p>
-
-														<p className="text-[11px] text-slate-600 mt-1">
-															{transaction.category} · {transaction.date}
-														</p>
-													</div>
-												</div>
-
-												<div className="flex items-center gap-3">
-													<span
-														className={`text-sm font-semibold ${
-															transaction.amount.startsWith("+")
-																? "text-emerald-400"
-																: "text-white"
-														}`}
-													>
-														{transaction.amount}
-													</span>
-
-													<button className="text-slate-600 hover:text-white transition-colors">
-														<MoreHorizontal size={17} />
-													</button>
-												</div>
-											</div>
-										);
-									})}
-								</div>
-							</div>
+							<RecentTransaction />
 
 							{/* =====================================================
                   BUDGETS

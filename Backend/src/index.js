@@ -17,7 +17,8 @@ const  {
 	incomeRoute, 
 	expenseRoute, 
 	userRoutes, 
-	budgetRoute
+	budgetRoute,
+	transactionRoute
 } = require('./route')
 const errorHandling = require("./middleware/errorHandling");
 
@@ -32,6 +33,7 @@ app.use('/api', loginRoute)
 app.use('/api', incomeRoute)
 app.use('/api', expenseRoute)
 app.use('/api', budgetRoute)
+app.use('/api', transactionRoute)
 
 //error handling middleware
 app.use(errorHandling);
